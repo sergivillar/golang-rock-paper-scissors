@@ -2,35 +2,20 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"strings"
-	"time"
+
+	c "github.com/sergivillar/rock-paper-scissors/config"
+	p "github.com/sergivillar/rock-paper-scissors/player"
 )
 
-var rules = map[string]string{
-	"rock":     "scissors",
-	"paper":    "rock",
-	"scissors": "paper",
-}
-var gameOptions = []string{"rock", "paper", "scissors"}
-
-type player struct {
-	name string
-}
-
 type game struct {
-	players []player
+	players []p.Player
 }
 
 func main() {
-	p1 := player{
-		name: "Player",
-	}
-
-	p2 := player{
-		name: "CPU",
-	}
+	p1 := p.Create("Player")
+	p2 := p.Create("CPU")
 
 	g := game{}
 	g.addPlayer(p1)
@@ -41,9 +26,9 @@ func main() {
 2 - %v
 3 - %v
 0 - Exit program
-`, strings.Title(gameOptions[0]),
-		strings.Title(gameOptions[1]),
-		strings.Title(gameOptions[2]))
+`, strings.Title(c.GameOptions[0]),
+		strings.Title(c.GameOptions[1]),
+		strings.Title(c.GameOptions[2]))
 
 	for {
 		var option int
@@ -58,37 +43,29 @@ func main() {
 			os.Exit(1)
 		}
 
-		if option > len(gameOptions) {
+		if option > len(c.GameOptions) {
 			fmt.Println("Invalid option. Choose another one")
 			continue
 		}
 
-		fmt.Println(g.play(gameOptions[option-1]))
+		fmt.Println(g.play(c.GameOptions[option-1]))
 	}
 }
 
-func rockPaperScissor() string {
-	s := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(s)
-
-	i := r.Intn(len(gameOptions))
-	return gameOptions[i]
-}
-
-func (g *game) addPlayer(p player) {
+func (g *game) addPlayer(p p.Player) {
 	g.players = append(g.players, p)
 }
 
 func (g game) play(playerOption string) string {
-	cpuOption := rockPaperScissor()
+	cpuOption := p.RockPaperScissor()
 
 	var result string
 	if playerOption == cpuOption {
 		result = "Draw"
-	} else if rules[playerOption] == cpuOption {
-		result = fmt.Sprintf("%v won", g.players[0].name)
+	} else if c.Rules[playerOption] == cpuOption {
+		result = fmt.Sprintf("%v won", g.players[0].Name)
 	} else {
-		result = fmt.Sprintf("%v won", g.players[1].name)
+		result = fmt.Sprintf("%v won", g.players[1].Name)
 	}
 	return result
 }
