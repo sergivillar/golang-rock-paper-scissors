@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -14,8 +15,14 @@ type game struct {
 }
 
 func main() {
-	p1 := p.Create("Player")
-	p2 := p.Create("CPU")
+	p1, err := p.Create("Player")
+	if err != nil {
+		log.Println(err)
+	}
+	p2, err := p.Create("CPU")
+	if err != nil {
+		log.Println(err)
+	}
 
 	g := game{}
 	g.addPlayer(p1)

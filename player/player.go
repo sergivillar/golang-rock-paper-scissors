@@ -1,6 +1,7 @@
 package player
 
 import (
+	"errors"
 	"math/rand"
 	"time"
 
@@ -13,10 +14,14 @@ type Player struct {
 }
 
 // Create a new player with params
-func Create(name string) Player {
+func Create(name string) (Player, error) {
+	if name == "" {
+		return Player{}, errors.New("You must provide a player name")
+	}
+
 	return Player{
 		Name: name,
-	}
+	}, nil
 }
 
 // RockPaperScissor function to get a random game option
